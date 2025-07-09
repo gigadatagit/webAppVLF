@@ -12,12 +12,12 @@ template_path = os.path.join('templates', 'templateVLF3FS3TR.docx')
 
 # Diccionario de labels para preguntas de verificación
 preguntas_verificacion = {
-    'frmVerfCabPreg1': 'Revisión visual del aislamiento del cable',
-    'frmVerfCabPreg2': 'Prueba de continuidad eléctrica',
-    'frmVerfCabPreg3': 'Verificación de conexiones seguras',
-    'frmVerfCabPreg4': 'Inspección de presencia de oxidación o corrosión',
-    'frmVerfCabPreg5': 'Confirmación de identificación correcta del circuito',
-    'frmVerfCabPreg6': 'Chequeo de integridad mecánica del tramo'
+    'frmVerfCabPreg1': 'El rótulo del cable en su chaqueta es legible y congruente con lo instalado en sitio',
+    'frmVerfCabPreg2': 'Limpieza de cada una de las terminales',
+    'frmVerfCabPreg3': 'Marcación correcta de los cables en ambos extremos',
+    'frmVerfCabPreg4': 'Verificación de continuidad del cable de acuerdo a las marcaciones',
+    'frmVerfCabPreg5': 'Verificación del tendido y conexionado del cable XLPE',
+    'frmVerfCabPreg6': 'Distancias de seguridad entre cables apropiadas para hacer la prueba VLF'
 }
 
 if 'doc' not in st.session_state:
