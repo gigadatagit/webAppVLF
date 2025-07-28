@@ -7,8 +7,19 @@ from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Cm
 from staticmap import StaticMap, CircleMarker
 
+def obtener_template_path(tipo_tramo: str, cantidad_tramos: int) -> str:
+    """
+    Retorna el path del template a usar basado en el tipo de tramo y la cantidad.
+    Ejemplo: 'Trifásicos' y 3 → 'templateVLF3FS3TR.docx'
+             'Monofásicos' y 10 → 'templateVLF1FS10TR.docx'
+    """
+    fases = "3FS" if tipo_tramo == "Trifásicos" else "1FS"
+    nombre_template = f"templateVLF{fases}{cantidad_tramos}TR.docx"
+    return os.path.join('templates', nombre_template)
+
+
 # Configuración de plantilla de Word (una sola instancia)
-template_path = os.path.join('templates', 'templateVLF3FS3TR.docx')
+#template_path = os.path.join('templates', 'templateVLF3FS3TR.docx')
 
 # Diccionario de labels para preguntas de verificación
 preguntas_verificacion = {
@@ -20,8 +31,8 @@ preguntas_verificacion = {
     'frmVerfCabPreg6': 'Distancias de seguridad entre cables apropiadas para hacer la prueba VLF'
 }
 
-if 'doc' not in st.session_state:
-    st.session_state.doc = DocxTemplate(template_path)
+#if 'doc' not in st.session_state:
+#    st.session_state.doc = DocxTemplate(template_path)
 
 # Inicialización de estado
 if 'step' not in st.session_state:
@@ -78,7 +89,18 @@ elif st.session_state.step == 2:
     if cols[0].button("Anterior"):
         prev_step()
     if cols[1].button("Siguiente"):
-        next_step()
+        #next_step()
+        # Crear ruta del template dinámicamente
+        tipo_tramos = st.session_state.data.get('tipoTramos')
+        cantidad_tramos = st.session_state.data.get('cantidadTramos')
+        template_path = obtener_template_path(tipo_tramos, cantidad_tramos)
+        
+        # Cargar la plantilla en el estado de sesión
+        try:
+            st.session_state.doc = DocxTemplate(template_path)
+            next_step()
+        except FileNotFoundError:
+            st.error(f"No se encontró la plantilla: {template_path}")
 
 # Paso 3: Formulario de Verificación
 elif st.session_state.step == 3:
