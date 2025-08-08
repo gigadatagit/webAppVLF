@@ -66,6 +66,7 @@ if st.session_state.step == 1:
     st.session_state.data['nombreCargo'] = st.text_input("Nombre del Cargo", key='cargo')
     st.session_state.data['fechaCreacion'] = st.text_input("Fecha de Creación (AAAA-MM-DD)", key='fecha_creacion')
     st.session_state.data['direccion'] = st.text_input("Dirección", key='direccion')
+    #Agregar el campo de selección de Rural o Urbano para la generación de la imagen 
 
     cols = st.columns([1,1])
     if cols[1].button("Siguiente"):
@@ -105,7 +106,7 @@ elif st.session_state.step == 2:
 # Paso 3: Formulario de Verificación
 elif st.session_state.step == 3:
     st.header("Paso 3: Formulario de Verificación del Cable")
-    opciones = ["Sí", "No"]
+    opciones = ["Sí ", "No "]
     for key, label in preguntas_verificacion.items():
         st.session_state.data[key] = st.selectbox(label, opciones, key=key)
     st.session_state.data['comVerificacion'] = st.text_area("Comentarios de Verificación", key='comentarios_verificacion')
@@ -128,8 +129,8 @@ elif st.session_state.step == 4:
             st.subheader(f"Tramo {i} Fase {f or 'Única'}")
             st.session_state.data[f'descripcionTramo_{suf}'] = st.text_input(f"Descripción {suf}", key=f'desc_{suf}')
             st.session_state.data[f'nombreCircuito{suf}'] = st.text_input(f"Nombre del Circuito {suf}", key=f'circuito_{suf}')
-            st.session_state.data[f'corrienteTramo{suf}'] = st.text_input(f"Corriente del Tramo {suf}", key=f'corr_{suf}')
-            st.session_state.data[f'distanciaCable{suf}'] = st.text_input(f"Distancia del Cable {suf}", key=f'dist_{suf}')
+            st.session_state.data[f'corrienteTramo{suf}'] = st.text_input(f"Corriente del Tramo {suf} (μArms)", key=f'corr_{suf}')
+            st.session_state.data[f'distanciaCable{suf}'] = st.text_input(f"Distancia del Cable {suf} (m)", key=f'dist_{suf}')
             st.session_state.data[f'evaluacionFinal{suf}'] = st.selectbox(f"Evaluación Final {suf}", ["CUMPLE", "NO CUMPLE"], key=f'eval_{suf}')
 
     cols = st.columns([1,1,1])
