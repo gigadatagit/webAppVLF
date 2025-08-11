@@ -17,6 +17,17 @@ def obtener_template_path(tipo_tramo: str, cantidad_tramos: int) -> str:
     nombre_template = f"templateVLF{fases}{cantidad_tramos}TR.docx"
     return os.path.join('templates', nombre_template)
 
+def convertir_a_mayusculas(data):
+    if isinstance(data, str):
+        return data.upper()
+    elif isinstance(data, dict):
+        return {k: convertir_a_mayusculas(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [convertir_a_mayusculas(v) for v in data]
+    elif isinstance(data, tuple):
+        return tuple(convertir_a_mayusculas(v) for v in data)
+    else:
+        return data  # cualquier otro tipo se deja igual
 
 # Configuración de plantilla de Word (una sola instancia)
 #template_path = os.path.join('templates', 'templateVLF3FS3TR.docx')
@@ -61,10 +72,12 @@ if st.session_state.step == 1:
     st.session_state.data['nombreProyecto'] = st.text_input("Nombre del Proyecto", key='nombreProyecto')
     st.session_state.data['nombreCiudadoMunicipio'] = st.text_input("Ciudad o Municipio", key='ciudad')
     st.session_state.data['nombreDepartamento'] = st.text_input("Departamento", key='departamento')
+    st.session_state.data['tipoCoordenada'] = st.selectbox(f"Tipo de Imagen para las Coordenadas", ["Urbano", "Rural"], key=f'tipo_coordenada')
     st.session_state.data['nombreCompleto'] = st.text_input("Nombre Completo", key='nombre')
     st.session_state.data['nroConteoTarjeta'] = st.text_input("Número de CONTE o Tarjeta Profesional", key='conte_tarjeta')
     st.session_state.data['nombreCargo'] = st.text_input("Nombre del Cargo", key='cargo')
-    st.session_state.data['fechaCreacion'] = st.text_input("Fecha de Creación (AAAA-MM-DD)", key='fecha_creacion')
+    st.session_state.data['fechaCreacionSinFormato'] = st.date_input("Fecha de Creación", key='fecha_creacion', value=datetime.now())
+    st.session_state.data['fechaCreacion'] = st.session_state.data['fechaCreacionSinFormato'].strftime("%Y-%m-%d")
     st.session_state.data['direccion'] = st.text_input("Dirección", key='direccion')
     #Agregar el campo de selección de Rural o Urbano para la generación de la imagen 
 
@@ -81,10 +94,11 @@ elif st.session_state.step == 2:
     st.session_state.data['tipoTramos'] = tipo
     max_tramos = 10 if tipo == "Trifásicos" else 20
     st.session_state.data['cantidadTramos'] = st.number_input("Cantidad de Tramos", min_value=1, max_value=max_tramos, step=1, key='cantidad_tramos')
-    st.session_state.data['latitud'] = st.text_input("Latitud", key='latitud')
-    st.session_state.data['longitud'] = st.text_input("Longitud", key='longitud')
+    st.session_state.data['latitud'] = st.number_input("Latitud", key='latitud', format="%.6f")
+    st.session_state.data['longitud'] = st.number_input("Longitud", key='longitud', format="%.6f")
     st.session_state.data['caracteristicasCable'] = st.text_input("Características del Cable", key='caracteristicas')
-    st.session_state.data['fechaCalibracion'] = st.text_input("Fecha de Calibración (AAAA-MM-DD)", key='fecha_calibracion')
+    st.session_state.data['fechaCalibracionSinFormato'] = st.date_input("Fecha de Calibración", key='fecha_calibracion')
+    st.session_state.data['fechaCalibracion'] = st.session_state.data['fechaCalibracionSinFormato'].strftime("%Y-%m-%d")
 
     cols = st.columns([1,1,1])
     if cols[0].button("Anterior"):
@@ -106,7 +120,7 @@ elif st.session_state.step == 2:
 # Paso 3: Formulario de Verificación
 elif st.session_state.step == 3:
     st.header("Paso 3: Formulario de Verificación del Cable")
-    opciones = ["Sí ", "No "]
+    opciones = ["Sí ", "No "]
     for key, label in preguntas_verificacion.items():
         st.session_state.data[key] = st.selectbox(label, opciones, key=key)
     st.session_state.data['comVerificacion'] = st.text_area("Comentarios de Verificación", key='comentarios_verificacion')
@@ -129,8 +143,8 @@ elif st.session_state.step == 4:
             st.subheader(f"Tramo {i} Fase {f or 'Única'}")
             st.session_state.data[f'descripcionTramo_{suf}'] = st.text_input(f"Descripción {suf}", key=f'desc_{suf}')
             st.session_state.data[f'nombreCircuito{suf}'] = st.text_input(f"Nombre del Circuito {suf}", key=f'circuito_{suf}')
-            st.session_state.data[f'corrienteTramo{suf}'] = st.text_input(f"Corriente del Tramo {suf} (μArms)", key=f'corr_{suf}')
-            st.session_state.data[f'distanciaCable{suf}'] = st.text_input(f"Distancia del Cable {suf} (m)", key=f'dist_{suf}')
+            st.session_state.data[f'corrienteTramo{suf}'] = st.number_input(f"Corriente del Tramo {suf} (μArms)", key=f'corr_{suf}', min_value=0.0, format="%.2f")
+            st.session_state.data[f'distanciaCable{suf}'] = st.number_input(f"Distancia del Cable {suf} (m)", key=f'dist_{suf}', min_value=0.0, format="%.2f")
             st.session_state.data[f'evaluacionFinal{suf}'] = st.selectbox(f"Evaluación Final {suf}", ["CUMPLE", "NO CUMPLE"], key=f'eval_{suf}')
 
     cols = st.columns([1,1,1])
@@ -143,7 +157,8 @@ elif st.session_state.step == 4:
 elif st.session_state.step == 5:
     
     st.header("Paso 5: Subida de Imágenes de Pruebas y Mapa")
-    datos = st.session_state.data.copy()
+    datos_Sin_Mayuscula = st.session_state.data.copy()
+    datos = convertir_a_mayusculas(datos_Sin_Mayuscula)
     cantidad = int(datos.get('cantidadTramos', 0))
     tipo = datos.get('tipoTramos')
     fases = ['A', 'B', 'C'] if tipo == 'Trifásicos' else ['']
@@ -206,6 +221,6 @@ elif st.session_state.step == 5:
         st.download_button(
             "Descargar Reporte Word",
             data=output,
-            file_name="reporte_vlf.docx",
+            file_name="reporteProtocoloVLF.docx",
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
