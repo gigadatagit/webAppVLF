@@ -225,8 +225,8 @@ elif st.session_state.step == 5:
         
         if datos.get('latitud') and datos.get('longitud'):
             try:
-                lat = float(datos['latitud'].replace(',', '.'))
-                lon = float(datos['longitud'].replace(',', '.'))
+                lat = float(str(datos['latitud']).replace(',', '.'))
+                lon = float(str(datos['longitud']).replace(',', '.'))
                 mapa = StaticMap(600, 400)
                 mapa.add_marker(CircleMarker((lon, lat), 'red', 12))
                 img_map = mapa.render()
@@ -243,8 +243,8 @@ elif st.session_state.step == 5:
             
         if datos.get('latitud') and datos.get('longitud'):
             try:
-                lat = datos['latitud'].replace(',', '.')
-                lon = datos['longitud'].replace(',', '.')
+                lat = str(datos['latitud']).replace(',', '.')
+                lon = str(datos['longitud']).replace(',', '.')
                     
                 png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=17)
                     
