@@ -225,7 +225,7 @@ elif st.session_state.step == 5:
     
     if st.session_state.data['tipoCoordenada'] == "Urbano":
         
-        if datos.get('latitud') and datos.get('longitud'):
+        if st.session_state.data['latitud'] and st.session_state.data['longitud']:
             try:
                 lat = float(str(datos['latitud']).replace(',', '.'))
                 lon = float(str(datos['longitud']).replace(',', '.'))
@@ -243,10 +243,10 @@ elif st.session_state.step == 5:
                 
     else:
             
-        if datos.get('latitud') and datos.get('longitud'):
+        if st.session_state.data['latitud'] and st.session_state.data['longitud']:
             try:
-                lat = str(datos['latitud']).replace(',', '.')
-                lon = str(datos['longitud']).replace(',', '.')
+                lat = float(str(datos['latitud']).replace(',', '.'))
+                lon = float(str(datos['longitud']).replace(',', '.'))
                     
                 png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=17)
                     
