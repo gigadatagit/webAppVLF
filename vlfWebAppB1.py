@@ -245,8 +245,8 @@ elif st.session_state.step == 5:
             
         if st.session_state.data['latitud'] and st.session_state.data['longitud']:
             try:
-                lat = float(str(datos['latitud']).replace(',', '.'))
-                lon = float(str(datos['longitud']).replace(',', '.'))
+                lat = float(str(st.session_state.data['latitud']).replace(',', '.'))
+                lon = float(str(st.session_state.data['longitud']).replace(',', '.'))
                     
                 png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=17)
                     
