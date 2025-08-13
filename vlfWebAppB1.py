@@ -160,7 +160,7 @@ elif st.session_state.step == 2:
 # Paso 3: Formulario de Verificación
 elif st.session_state.step == 3:
     st.header("Paso 3: Formulario de Verificación del Cable")
-    opciones = ["Sí ", "No "]
+    opciones = ["Sí", "No"]
     for key, label in preguntas_verificacion.items():
         st.session_state.data[key] = st.selectbox(label, opciones, key=key)
     st.session_state.data['comVerificacion'] = st.text_area("Comentarios de Verificación", key='comentarios_verificacion')
@@ -183,8 +183,8 @@ elif st.session_state.step == 4:
             st.subheader(f"Tramo {i} Fase {f or 'Única'}")
             st.session_state.data[f'descripcionTramo_{suf}'] = st.text_input(f"Descripción {suf}", key=f'desc_{suf}')
             st.session_state.data[f'nombreCircuito{suf}'] = st.text_input(f"Nombre del Circuito {suf}", key=f'circuito_{suf}')
-            st.session_state.data[f'corrienteTramo{suf}'] = st.number_input(f"Corriente del Tramo {suf} (μArms)", key=f'corr_{suf}', min_value=0.0, format="%.2f")
-            st.session_state.data[f'distanciaCable{suf}'] = st.number_input(f"Distancia del Cable {suf} (m)", key=f'dist_{suf}', min_value=0.0, format="%.2f")
+            st.session_state.data[f'corrienteTramo{suf}'] = st.number_input(f"Corriente del Tramo {suf} [μArms]", key=f'corr_{suf}', min_value=0.0, format="%.2f")
+            st.session_state.data[f'distanciaCable{suf}'] = st.number_input(f"Distancia del Cable {suf} [m]", key=f'dist_{suf}', min_value=0.0, format="%.2f")
             st.session_state.data[f'evaluacionFinal{suf}'] = st.selectbox(f"Evaluación Final {suf}", ["CUMPLE", "NO CUMPLE"], key=f'eval_{suf}')
 
     cols = st.columns([1,1,1])
@@ -234,8 +234,8 @@ elif st.session_state.step == 5:
                 img_map.save(buf_map, format='PNG')
                 buf_map.seek(0)
                 datos['imgMapsProyecto'] = InlineImage(st.session_state.doc, buf_map, Cm(18))
-            except:
-                st.error("Coordenadas inválidas para el mapa.")
+            except Exception as e:
+                st.error(f"Coordenadas inválidas para el mapa. {e}")
         else:
             st.error("Faltan coordenadas para el mapa.")
                 
@@ -251,8 +251,8 @@ elif st.session_state.step == 5:
                 buf_map = io.BytesIO(png_bytes)
                 buf_map.seek(0)
                 datos['imgMapsProyecto'] = InlineImage(st.session_state.doc, buf_map, Cm(18))
-            except:
-                st.error("Coordenadas inválidas para el mapa.")
+            except Exception as e:
+                st.error(f"Coordenadas inválidas para el mapa. {e}")
         else:
             st.error("Faltan coordenadas para el mapa.")
             
