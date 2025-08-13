@@ -199,8 +199,10 @@ elif st.session_state.step == 5:
     st.header("Paso 5: Subida de Imágenes de Pruebas y Mapa")
     datos_Sin_Mayuscula = st.session_state.data.copy()
     datos = convertir_a_mayusculas(datos_Sin_Mayuscula)
-    cantidad = int(datos.get('cantidadTramos', 0))
-    tipo = datos.get('tipoTramos')
+    #cantidad = int(datos.get('cantidadTramos', 0))
+    #tipo = datos.get('tipoTramos')
+    cantidad = int(st.session_state.data['cantidadTramos'])
+    tipo = st.session_state.data['tipoTramos']
     fases = ['A', 'B', 'C'] if tipo == 'Trifásicos' else ['']
 
     # Mapa
@@ -258,7 +260,7 @@ elif st.session_state.step == 5:
             
 
     # Imagen de tensión
-    tension = datos.get('tensionPrueba')
+    tension = st.session_state.data['tensionPrueba']
     img_path = None
     if tension == 'Aceptación':
         img_path = 'images/imgAceptacion.png'
