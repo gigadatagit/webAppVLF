@@ -32,7 +32,7 @@ def get_map_png_bytes(lon, lat, buffer_m=300, width_px=900, height_px=700, zoom=
     ax.set_ylim(bbox[1], bbox[3])
 
     # Añadir basemap (Esri World Imagery)
-    cx.add_basemap(ax, source=cx.providers.Esri.WorldImagery, crs="EPSG:3857", zoom=zoom)
+    cx.add_basemap(ax, source=cx.providers.Esri.WorldImageryClarity, crs="EPSG:3857", zoom=zoom)
 
     # Dibujar marcador
     gdf.plot(ax=ax, markersize=40, color="red")
@@ -221,8 +221,34 @@ elif st.session_state.step == 5:
     #        st.error("Coordenadas inválidas para el mapa.")
     #else:
     #    st.error("Faltan coordenadas para el mapa.")
-    
-    
+            
+
+    # Imagen de tensión
+    tension = st.session_state.data['tensionPrueba']
+    img_path = None
+    if tension == 'Aceptación':
+        img_path = 'images/imgAceptacion.png'
+    elif tension == 'Mantenimiento':
+        img_path = 'images/imgMantenimiento.png'
+    if img_path and os.path.exists(img_path):
+        buf_t = io.BytesIO(open(img_path, 'rb').read())
+        buf_t.seek(0)
+        datos['imgTablaTensionPrueba'] = InlineImage(st.session_state.doc, buf_t, Cm(18))
+
+    # Subida de imágenes por tramo
+    st.subheader("Imágenes de Pruebas de Tramos")
+    for i in range(1, cantidad + 1):
+        for f in fases:
+            key = f"imgPruebaTramoTrm{i}{f or ''}"
+            uploaded = st.file_uploader(f"Imagen para Tramo {i} Fase {f or 'Única'}", type=['png','jpg','jpeg'], key=key)
+            if uploaded:
+                buf = io.BytesIO(uploaded.read())
+                buf.seek(0)
+                datos[key] = InlineImage(st.session_state.doc, buf, Cm(14))
+            else:
+                datos[key] = None
+                
+                
     if st.session_state.data['tipoCoordenada'] == "Urbano":
         
         if st.session_state.data['latitud'] and st.session_state.data['longitud']:
@@ -257,32 +283,6 @@ elif st.session_state.step == 5:
                 st.error(f"Coordenadas inválidas para el mapa. {e}")
         else:
             st.error("Faltan coordenadas para el mapa.")
-            
-
-    # Imagen de tensión
-    tension = st.session_state.data['tensionPrueba']
-    img_path = None
-    if tension == 'Aceptación':
-        img_path = 'images/imgAceptacion.png'
-    elif tension == 'Mantenimiento':
-        img_path = 'images/imgMantenimiento.png'
-    if img_path and os.path.exists(img_path):
-        buf_t = io.BytesIO(open(img_path, 'rb').read())
-        buf_t.seek(0)
-        datos['imgTablaTensionPrueba'] = InlineImage(st.session_state.doc, buf_t, Cm(18))
-
-    # Subida de imágenes por tramo
-    st.subheader("Imágenes de Pruebas de Tramos")
-    for i in range(1, cantidad + 1):
-        for f in fases:
-            key = f"imgPruebaTramoTrm{i}{f or ''}"
-            uploaded = st.file_uploader(f"Imagen para Tramo {i} Fase {f or 'Única'}", type=['png','jpg','jpeg'], key=key)
-            if uploaded:
-                buf = io.BytesIO(uploaded.read())
-                buf.seek(0)
-                datos[key] = InlineImage(st.session_state.doc, buf, Cm(14))
-            else:
-                datos[key] = None
 
     if st.button("Generar Word"):
         doc = st.session_state.doc
