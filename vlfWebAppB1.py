@@ -32,7 +32,7 @@ def get_map_png_bytes(lon, lat, buffer_m=300, width_px=900, height_px=700, zoom=
     ax.set_ylim(bbox[1], bbox[3])
 
     # Añadir basemap (Esri World Imagery)
-    cx.add_basemap(ax, source=cx.providers.Esri.WorldImageryClarity, crs="EPSG:3857", zoom=zoom)
+    cx.add_basemap(ax, source=cx.providers.Esri.WorldImagery, crs="EPSG:3857", zoom=zoom)
 
     # Dibujar marcador
     gdf.plot(ax=ax, markersize=40, color="red")
