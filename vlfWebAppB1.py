@@ -274,7 +274,7 @@ elif st.session_state.step == 5:
                 lat = float(str(st.session_state.data['latitud']).replace(',', '.'))
                 lon = float(str(st.session_state.data['longitud']).replace(',', '.'))
                     
-                png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=17)
+                png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=16)
                     
                 buf_map = io.BytesIO(png_bytes)
                 buf_map.seek(0)
