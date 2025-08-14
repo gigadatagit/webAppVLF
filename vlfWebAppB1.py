@@ -32,7 +32,7 @@ def get_map_png_bytes(lon, lat, buffer_m=300, width_px=900, height_px=700, zoom=
     ax.set_ylim(bbox[1], bbox[3])
 
     # Añadir basemap (Esri World Imagery)
-    cx.add_basemap(ax, source=cx.providers.Stamen.Terrain, crs="EPSG:3857", zoom=zoom)
+    cx.add_basemap(ax, source=cx.providers.Esri.WorldImagery, crs="EPSG:3857", zoom=zoom)
 
     # Dibujar marcador
     gdf.plot(ax=ax, markersize=40, color="red")
@@ -272,7 +272,11 @@ elif st.session_state.step == 5:
         if st.session_state.data['latitud'] and st.session_state.data['longitud']:
             try:
                 lat = float(str(st.session_state.data['latitud']).replace(',', '.'))
+                
                 lon = float(str(st.session_state.data['longitud']).replace(',', '.'))
+                
+                st.warning(f"Prueba de coordenada en modo rural (latitud): {lat}")
+                st.warning(f"Prueba de coordenada en modo rural (longitud): {lon}")
                     
                 png_bytes = get_map_png_bytes(lon, lat, buffer_m=300, zoom=16)
                     
